@@ -28,3 +28,37 @@ update 为 pixi node 每帧刷新时的函数
 
 其余皆为pixi属性，详情见[`pixiJS API DOCUMENT`](http://pixijs.download/release/docs/index.html)
 
+## 目前示例
+
+```jsx
+<vroot :stage="$stage" :x="1" :class="100">
+  <vtext :x=100>???</vtext>
+  <vtext :x=0 :y=0>
+    <vtext :x=300 :y=80 :text="time" :anchor="{x:0.5,y:0.5}" :style="{fill:'blue'}"></vtext>
+  </vtext>
+  <zone
+    v-for="(enemy, index) in enemys" 
+    :key="enemy.name" 
+    :y="100 + 50*index"
+    :width=400
+    :height=50
+    :radius=0.2
+    :fillColor="'red'"
+    :fillAlpha=0.6
+  >
+    <vtext
+      v-for="(info, id, i) in enemy"
+      :key="id"
+      :x="100*i"
+      :text="info"
+      :width="100"
+    ></vtext>
+  </zone>
+  <sprite :class="logo" :x=208 :y=208 :alpha='alpha' :anchor='{x: 0.5,y:0.5}' :init='loop' :update='rotate'>logo</sprite>
+</vroot>
+<vroot :width=300 :height=300 >
+  <sprite>logo</sprite>
+  <vtext :text="time"></vtext>
+</vroot>
+```
+![示例](./_docs/template.png)

@@ -5,12 +5,15 @@ import nodes from '../lib/nodes';
 import show from './show.vue';
 import logo from './images/logo.png';
 import VuePixi from '../index';
+import utils from '../lib/utils';
 
 Vue.use(VuePixi);
 // window.diff = diff;
 window.$ = $;
 window.Vue = Vue;
 window.main = {};
+main.nodes = nodes;
+main.utils = utils;
 /**
  * set Application
  */
@@ -41,13 +44,6 @@ stage.addChild(nodes.getNode('border', {
   alignment: 0,
 }));
 
-/**
- * setTicker
- */
-app.ticker.add(() => {
-  TWEEN.update();
-  nodes.update();
-});
 /**
  * laod Images
  */

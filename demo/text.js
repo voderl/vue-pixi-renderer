@@ -3,6 +3,7 @@ const a = el('container', { cool: c, well: 0 });
 const b = el('container', { cool: c, well: 1, hello: true });
 console.log(diff(a, b));
 
+const d = 6;
 /* var a = el('text',{
   text: '哈哈哈'
   x: 50,

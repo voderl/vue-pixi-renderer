@@ -1,4 +1,5 @@
 import vtext from './components/vtext.vue';
+import zone from './components/zone.vue';
 import vroot from './components/vroot.vue';
 import sprite from './components/sprite.vue';
 import container from './components/container.vue';
@@ -9,6 +10,7 @@ const VuePixi = {
   install(Vue, options) {
     Vue.component('vtext', vtext);
     Vue.component('vroot', vroot);
+    Vue.component('zone', zone);
     Vue.component('sprite', sprite);
     Vue.component('container', container);
   },
