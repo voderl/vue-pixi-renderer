@@ -3,7 +3,7 @@ import Vue from 'vue/dist/vue';
 import TWEEN from '@tweenjs/tween.js';
 import nodes from '../lib/nodes';
 import show from './show.vue';
-import logo from './images/logo.png';
+import book from './book.vue';
 import VuePixi from '../index';
 import utils from '../lib/utils';
 
@@ -22,11 +22,11 @@ const app = new $.Application({
   height: 416,
   antialias: true,
   transparent: true,
-  resolution: 1,
+  resolution: 2,
 });
 window.app = app;
 document.body.appendChild(app.view);
-const width = document.body.clientWidth;
+const width = Math.min(416, document.body.clientWidth);
 app.view.style.width = `${width}px`;
 app.view.style.height = `${width}px`;
 const { stage } = app;
@@ -48,15 +48,6 @@ stage.addChild(nodes.getNode('border', {
  * laod Images
  */
 main.textures = {};
-const loader = $.Loader.shared;
-loader.add('logo', logo, (resource) => {
-  const { texture } = resource;
-  console.log(resource);
-  main.textures[resource.name] = texture;
-});
-loader.onComplete.add(() => {
-  main.vm = new Vue({
-    render: (h) => h(show),
-  }).$mount('#app');
-});
-loader.load();
+main.vm = new Vue({
+  render: (h) => h(book),
+}).$mount('#app');

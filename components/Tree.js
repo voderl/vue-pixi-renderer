@@ -12,17 +12,16 @@ class Tree {
     this.stage = stage;
   }
 
-  fresh(tree) {
+  fresh(tree, options) {
     let oldTree = this.tree;
     this.tree = tree;
     if (oldTree && this.renderer) {
       const pathches = diff(oldTree, tree);
       console.log(pathches);
-      patch(this.renderer, pathches);
+      patch(this.renderer, pathches, options);
     }
     else {
-      const real = tree.render();
-      this.stage.addChild(real);
+      const real = tree.render(this.stage, options);
       this.renderer = real;
     }
     oldTree = null;
