@@ -4,10 +4,10 @@ import TWEEN from '@tweenjs/tween.js';
 import nodes from '../lib/nodes';
 import show from './show.vue';
 import book from './book.vue';
-import VuePixi from '../index';
+import VuePixiRenderer from '../index';
 import utils from '../lib/utils';
 
-Vue.use(VuePixi);
+Vue.use(VuePixiRenderer);
 // window.diff = diff;
 window.$ = $;
 window.Vue = Vue;

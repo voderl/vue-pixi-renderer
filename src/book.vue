@@ -1,16 +1,28 @@
+防止事件传递过多，当没有chidren存在点击事件时 interactiveChildren 置为false
+但是响应式增减事件 可能不太好弄，除非加到props里，但是又增加diff负担，暂时搁置
+
+  fit 点击会越来越大 ，有问题。
+
 <template>
-  <div>
     <vroot :stage="$stage">
+      <!--
+        为什么要弄一个$index， 因为点击需要精确到点了哪一个框
+        如果仅仅@pointertap="clickIndex(i)"，每次重新刷新，函数都要重新更新，因为传的是重新生成的
+        一个匿名函数，弄一个$index，会直接在pixi属性元素中添加$index属性($确保不会覆盖正常属性)，
+        这样在点击事件中，event.target.$index 即可访问到index
+       -->
       <zone
         v-for="(enemy, index) in enemys"
         :key="enemy.name"
         :y="3 + (lineHeight+3)*index"
-        class="bg"
+        :$index='index'
+        :class="['bg', { select: index === select}]"
+        @pointerdown="clickIndex"
       >
         <sprite class="icon" :update="rotate">{{ enemy.icon }}</sprite>
-        <vtext class="font"
-          :x="lineHeight"
-          :style="{fontSize:'20px', fill:'#ff0'}"
+        <vtext
+          class="font"
+          :fit="{zone:[lineHeight, 0, 70, 30], ratio:[0.4,0.8]}"
         >{{ enemy.name }}</vtext>
         <container :x="lineHeight+nameWidth" :y=0>
           <vtext class="status">生命 {{ enemy.hp }}</vtext>
@@ -23,18 +35,19 @@
           <vtext :x=180 :y=40 class="status">1防 {{ enemy.defDamage }}</vtext>
         </container>
       </zone>
-      <zone class="color" :width=90 :height=25 :x="width-100" :y="height-25">
-        <vtext class="status" @pointertap="closePanel">
+      <zone class="color" :width=90 :height=25 :x="width-100" :y="height-25"
+        @pointertap="closePanel">
+        <vtext class="status" fit="parent">
           返回游戏
         </vtext>
       </zone>
+      <graphics :x=50 :init="drawLine"></graphics>
     </vroot>
-  </div>
 </template>
 
 <script>
 export default {
-  name: 'show',
+  name: 'book',
   data() {
     const width = 416; const
       height = 416;
@@ -45,8 +58,14 @@ export default {
       height,
       num,
       lineHeight,
+      select: 0,
       rotate() {
-        this.angle += 1;
+        this.angle -= 1;
+      },
+      drawLine() {
+        this.lineStyle(4, 0xFFFFFF, 1);
+        this.moveTo(0, 0);
+        this.lineTo(80, 50);
       },
       nameWidth: 80,
       class: {
@@ -81,11 +100,16 @@ export default {
           class: 'color',
           width: width - 20,
           height: lineHeight,
+          lineWidth: 0,
           x: 10,
           anchor: {
             x: 0.5,
             y: 0.5,
           },
+        },
+        select: {
+          lineWidth: 2,
+          lineColor: 0xfff00,
         },
       },
       enemys: [
@@ -165,7 +189,7 @@ export default {
           defDamage: '?',
         },
         {
-          name: '小白兔007',
+          name: '小白兔007是我是我是我是我',
           icon: './img/logo.png',
           hp: 35,
           atk: 10,
@@ -195,7 +219,13 @@ export default {
       else {
         this.enemys = this.enemysBK;
       }
-      console.log('you click closePanel');
+      console.log('you click closePanel2');
+    },
+    clickIndex(event) {
+      this.select = event.target.$index;
+    },
+    console() {
+      console.log('1');
     },
   },
 };

@@ -1,5 +1,5 @@
 /**
- * vroot 被render时 提供一个命名空间保存树
+ * vroot 被render时 提供一个命名空间    保存树
  */
 import {
   el, diff, patch, Node,

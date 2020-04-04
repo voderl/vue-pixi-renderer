@@ -12,13 +12,14 @@
     "Graphics",
     "Canvas"
   ],
-  "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
+    "buildLib": "vue-cli-service build --target lib --name vue-pixi-renderer ./index.js",
     "lint": "vue-cli-service lint"
   },
   "author": "xiao",
+  "main": "./dist/vue-pixi-renderer.common.js",
   "license": "MIT",
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.2.0",
@@ -32,14 +33,9 @@
     "vue-template-compiler": "^2.6.11"
   },
   "dependencies": {
-    "@tweenjs/tween.js": "^18.5.0",
     "list-diff2": "^0.1.4",
-    "mustache": "^4.0.1",
+    "@tweenjs/tween.js": "^18.5.0",
     "pixi.js-legacy": "^5.2.1",
     "vue": "^2.6.11"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions"
-  ]
+  }
 }
