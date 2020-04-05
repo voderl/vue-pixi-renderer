@@ -1,11 +1,15 @@
 
 <script>
-import { Application, Loader, Texture } from 'pixi.js-legacy';
+import {
+  Application, Loader, Texture, utils as pixiUtils,
+} from 'pixi.js-legacy';
 import {
   el, diff, patch, Node,
 } from '../lib';
 import Tree from './Tree';
 import utils from '../lib/utils';
+import textures from '../lib/texture';
+import Render from '../lib/Render';
 /**
  * vroot 需要 是正常组件
  * 因为需要复用，所以在create时建立一个虚拟Node Tree
@@ -72,14 +76,7 @@ export default {
      * 加载sprite
      */
     if ($options.sprite.length > 0) {
-      $options.sprite.forEach(e => {
-        new Loader().add(e.src, (resource) => {
-          const { texture } = resource;
-          e.nodes.forEach(node => {
-            Render.update(node, 'sprite', { texture: Texture.Loading }, { texture }, $options, true);
-          });
-        }).load();
-      });
+      textures.loadTexture($options, Render);
     }
     console.timeEnd();
     return $data.vnode;
