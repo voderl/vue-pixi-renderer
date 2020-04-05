@@ -63,7 +63,7 @@ export default {
     if (!$data.setup) {
       this.setup($attrs, h);
     }
-    // console.time();
+    console.time();
     /**
      * 实际渲染Tree，fresh即没有则建立，有则patch
      */
@@ -81,24 +81,24 @@ export default {
         }).load();
       });
     }
-    // console.timeEnd();
+    console.timeEnd();
     return $data.vnode;
   },
   created() {
-    this.$data.class = this.$parent.class;
+    const cls = {};
+    const allClass = this.$parent.class || {};
+    Object.keys(allClass).forEach(id => {
+      cls[id] = formatClass(allClass[id], allClass);
+    });
+    this.$data.class = cls;
     this.$data.setup = false;
     this.$data.Tree = new Tree();
   },
   methods: {
     getOption($attrs) {
-      const cls = {};
-      const allClass = this.$parent.class || {};
-      Object.keys(allClass).forEach(id => {
-        cls[id] = formatClass(allClass[id], allClass);
-      });
       return {
         texture: $attrs.texture,
-        class: cls,
+        class: this.$data.class,
         sprite: [],
       };
     },

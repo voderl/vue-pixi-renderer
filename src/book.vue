@@ -1,8 +1,3 @@
-防止事件传递过多，当没有chidren存在点击事件时 interactiveChildren 置为false
-但是响应式增减事件 可能不太好弄，除非加到props里，但是又增加diff负担，暂时搁置
-
-  fit 点击会越来越大 ，有问题。
-
 <template>
     <vroot :stage="$stage">
       <!--
@@ -11,13 +6,19 @@
         一个匿名函数，弄一个$index，会直接在pixi属性元素中添加$index属性($确保不会覆盖正常属性)，
         这样在点击事件中，event.target.$index 即可访问到index
        -->
-      <zone
+      <vtext
+        v-if='enemys.length === 0'
+        :fit='{zone:[0,0,width,height],ratio:[0, 2]}'
+      >当前无怪物</vtext>
+      <zone v-else
         v-for="(enemy, index) in enemys"
         :key="enemy.name"
         :y="3 + (lineHeight+3)*index"
         :$index='index'
         :class="['bg', { select: index === select}]"
         @pointerdown="clickIndex"
+        :removing='hide'
+        :start='show'
       >
         <sprite class="icon" :update="rotate">{{ enemy.icon }}</sprite>
         <vtext
@@ -36,12 +37,16 @@
         </container>
       </zone>
       <zone class="color" :width=90 :height=25 :x="width-100" :y="height-25"
-        @pointertap="closePanel">
+        @pointertap="closePanel"
+        :key=17
+      >
         <vtext class="status" fit="parent">
           返回游戏
         </vtext>
       </zone>
-      <graphics :x=50 :init="drawLine"></graphics>
+      <graphics :x=50 :init="drawLine"
+        :key=20
+      ></graphics>
     </vroot>
 </template>
 
@@ -58,14 +63,27 @@ export default {
       height,
       num,
       lineHeight,
+      status: true,
       select: 0,
       rotate() {
         this.angle -= 1;
       },
       drawLine() {
-        this.lineStyle(4, 0xFFFFFF, 1);
+        this.lineStyle(4, 0x0, 1);
         this.moveTo(0, 0);
         this.lineTo(80, 50);
+      },
+      show() {
+        this.changeTo({
+          alpha: 0,
+        }, {
+          alpha: 1,
+        }, 150);
+      },
+      hide(cb) {
+        this.changeTo({
+          alpha: 0,
+        }, 100, cb);
       },
       nameWidth: 80,
       class: {
@@ -109,7 +127,7 @@ export default {
         },
         select: {
           lineWidth: 2,
-          lineColor: 0xfff00,
+          lineColor: 0xffff00,
         },
       },
       enemys: [
