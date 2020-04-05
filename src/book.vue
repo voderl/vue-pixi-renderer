@@ -20,7 +20,7 @@
         :removing='hide'
         :start='show'
       >
-        <sprite class="icon" :update="rotate">{{ enemy.icon }}</sprite>
+        <sprite class="icon" :update="rotate" src='./img/logo.png'/>
         <vtext
           class="font"
           :fit="{zone:[lineHeight, 0, 70, 30], ratio:[0.4,0.8]}"
@@ -51,6 +51,8 @@
 </template>
 
 <script>
+import logo from './logo.png';
+
 export default {
   name: 'book',
   data() {
@@ -59,6 +61,7 @@ export default {
     const lineHeight = 62;
     const num = 6;
     return {
+      logo,
       width,
       height,
       num,
