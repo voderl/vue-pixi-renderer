@@ -23,6 +23,9 @@
   - [简单实例](#%e7%ae%80%e5%8d%95%e5%ae%9e%e4%be%8b)
   - [示例网站](#%e7%a4%ba%e4%be%8b%e7%bd%91%e7%ab%99)
   - [工程相关](#%e5%b7%a5%e7%a8%8b%e7%9b%b8%e5%85%b3)
+  - [目前BUG:](#%e7%9b%ae%e5%89%8dbug)
+  - [TODO：](#todo)
+  - [更新日志：](#%e6%9b%b4%e6%96%b0%e6%97%a5%e5%bf%97)
 
 <!-- /TOC -->
 
@@ -41,7 +44,7 @@
 其余皆为pixi属性，详情见[`pixiJS API DOCUMENT`](http://pixijs.download/release/docs/index.html)
 
 ### 安装使用
-
+**提醒： 目前有较多bug**
 ```javascript
 npm install -save vue-pixi-renderer
 ```
@@ -133,8 +136,7 @@ export default {
  http://pixijs.download/release/docs/PIXI.TextStyle.html 
 
 #### sprite
-
-sprite的src请填public里图片的路径，因为不能被解析(×)
+sprite如果要填写src，请填写public路径里的位置。直接填写相对位置图片可能不能被正常导入。
 
 具体是id还是src，请查看 vroot中texture值是否给出
 
@@ -222,28 +224,29 @@ class相当于一个包含所要填写属性的对象，class里面的值可以�
 
 1. 以某个区域自适应大小
 
-   ```jsx
-   <vtext
-        class="font"
-        :fit="{zone:[x, y, width, height], ratio:[minRatio,maxRatio], 				:type="center"}"
-   >哈哈哈</vtext>
-   ```
+```jsx
+<vtext
+    class="font"
+    :fit="{zone:[x, y, width, height], ratio:[minRatio,maxRatio], 				:type="center"}"
+>哈哈哈</vtext>
+```
 
-   zone: 为区域的x，y，width，height
+zone: 为区域的x，y，width，height
 
-   type：为在区域的基本位置 
+type：为在区域的基本位置
 
-   ​		Array： [dx，dy] dx,dy均为0~1中的一个值，表明在区域的位置
+- Array： [dx，dy] dx,dy均为0~1中的一个值，表明在区域的位置
 
-   ​		String:  center, left, right, top, bottom
+- String:  center, left, right, top, bottom
 
-   ratio:  放大的比例
+ratio:  放大的比例
 
-   ​		number ：锁定放大比例
+- number ：锁定放大比例
 
-   ​		Array:  [minRatio, maxRatio] 最小放大比例，最大放大比例
+- Array:  [minRatio, maxRatio] 最小放大比例，最大放大比例
 
-   2. 以parent尺寸，自适应大小
+
+2. 以parent尺寸，自适应大小
 
 ```jsx
 <zone class="color" :width=80 :height=25>
@@ -266,7 +269,7 @@ class相当于一个包含所要填写属性的对象，class里面的值可以�
         :class="['bg', { select: index === select}]"
         @pointerdown="clickIndex"
       >
-			...
+
       </zone>
 methods: {
     clickIndex(event) {
@@ -275,14 +278,11 @@ methods: {
     },
 }
 ```
+如果使用v-for生成多个结构，如何确定点击了哪一个？  
+>    使用`:$index='index'`  ,
+>  如果仅仅使用`@pointertap="clickIndex(i)"`，每次重新刷新，函数都要重新更新，因为传入的是重新生成的一个匿名函数，使用`$index`，会直接在pixi属性元素中添加`$index`属性(\$确保不会覆盖正常属性)，这样在点击事件中，通过`event.target.$index` 即可访问到index。
 
-​    为什么要弄一个$index， 因为点击需要精确到点了哪一个框
-
-​    如果仅仅`@pointertap="clickIndex(i)"`，每次重新刷新，函数都要重新更新，因为传的是重新生成的
-
-   一个匿名函数，弄一个$index，会直接在pixi属性元素中添加$index属性($确保不会覆盖正常属性)，
-
-​    这样在点击事件中，event.target.$index 即可访问到index
+​   
 
 
 
@@ -294,32 +294,41 @@ methods: {
 
 pointer是兼容mouse和touch的
 
-​	pointerdown 按下
+* ​	pointerdown 按下
 
-​	pointerup  松起
+* ​	pointerup  松起
 
-​	pointermove 移动
+* pointermove 移动
 
-​	pointertap  点击
+* pointertap  点击
 
-​	pointerout   移出该元素
+* pointerout   移出该元素
 
 
 
 ### function 使用
 
-:update 传入的方法 每帧执行一次，每秒60帧
+* :update 传入的方法 每帧执行一次，每秒60帧
 
-:init 传入的方法 在生成该pixi元素时执行
+* :init 传入的方法 在生成该pixi元素时执行
 
-:start 传入的方法，在pixi元素被加入时执行
+* :start 传入的方法，在pixi元素被加入时执行
+  
+* :removing 传入的方法，应该是一个以第一个参数为回调的异步函数，作为隐藏时的特效显示
+  ```javascript
+  function (cb) {
+    // changeTo 函数请看下一节解释
+    this.changeTo({
+      alpha: 0,
+    }, 500, cb);
+  }
+  ```
 
 **注意，请不要写在methods里，methods里的方法会bind Vue的this**
 
 ```jsx
 <sprite class="icon" :update="rotate">./img/logo</sprite>
 <script>
-    请不要写在methods里，methods里的方法会bind Vue的this
     data() {
         return {
           rotate() {
@@ -465,18 +474,13 @@ export default {
 
 ```
 
-
-![示例](./_docs/template.png)
-
 ### [示例网站](https://www.voderl.cn/test/)
 
 ### 工程相关
 
 index.js	- vue插件的导出
 
-|— components    
-
-​			vue基本组件，functional组件，和 虚拟Tree的实例
+|— components ：vue基本组件，functional组件，和 虚拟Tree的实例
 
 ​			—— vroot 为基本组件，附带一个Tree的实例
 
@@ -497,3 +501,21 @@ index.js	- vue插件的导出
 ​			—— Render.js  - 又一层包装，对一些参数的处理成nodes.js对应元素的参数，渲染Node由此处
 
 ​			—— utils.js - 一些utils函数，比如颜色，deep assign， clone
+
+### 目前BUG:
+* 由于没有显式指定Key，在结构发生变化时，比如中间有几个元素消失时，diff判断不是直接移除中间部分，而是逐个比对，导致后续元素使用replace而增大工作量。Vue的functional没有this，暂时没有找到给每一个元素一个单独id作为key的方案。
+* fit指定为'parent'时，内部元素改变时可能不能正常更新，父级元素改变时同样可能不能正常更新。
+  * Graphics重新绘制后可能width，height不重新改变，导致fit更新失败。
+  * 元素的复用有没有可能？清空一个元素再把值赋予？
+
+### TODO：
+* 增加一些动画函数，获取一个tween，简单介绍基本使用，具体使用看[`tween.js`](https://github.com/tweenjs/tween.js/blob/master/docs/user_guide.md)使用教程。这样在传入的init函数里可以进行更多动画。(更换一个init，应该是会直接执行init的)
+* sprite支持src属性，因为直接填到`<sprite>value</sprite>`里面可能相对位置的图片不能被正常导入。sprite使用`<sprite/>`标签？sprite加载错误时，将texture更换为Texture.Wrong，表明加载错误。(sprite标签使用src也是同样)
+* 性能感觉不好。如果每帧渲染一次感觉是极大的负担，不建议更改属性完成某些动画操作。如何性能优化？不确定哪些属性更改了，要全盘比对，耗资源较大。感觉主要适用于一些ui的绘制。
+
+### 更新日志：
+4-5：
+* 默认将所有node的interactiveChildren设为false，当一个node有事件时，向上将parent的interactiveChildren设置为true
+* 修复了v-if使用中不能正常diff的问题。
+* 完善了图片路径加载的报错提示、热重载、以及用系统警告图片代替加载失败的图片等。
+* 增加了异步删除逻辑，可以在一个元素remove时，传入:remove函数实现消失动画。
