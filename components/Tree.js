@@ -22,6 +22,7 @@ class Tree {
     }
     else {
       const real = tree.render(this.stage, options);
+      real.isRoot = true;
       this.renderer = real;
     }
     oldTree = null;
