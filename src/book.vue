@@ -17,8 +17,8 @@
         :$index='index'
         :class="['bg', { select: index === select}]"
         @pointerdown="clickIndex"
-        :removing='hide'
-        :start='show'
+        :hide=100
+        :show=150
       >
         <sprite class="icon" :update="rotate" src='./img/logo.png'/>
         <vtext
