@@ -16,7 +16,7 @@
         :y="3 + (lineHeight+3)*index"
         :$index='index'
         :class="['bg', { select: index === select}]"
-        @pointerdown="clickIndex"
+        @pointerdown='clickIndex'
         :hide=100
         :show=150
       >
@@ -243,6 +243,7 @@ export default {
       console.log('you click closePanel2');
     },
     clickIndex(event) {
+      if (event.target === null) return;
       this.select = event.target.$index;
     },
     console() {

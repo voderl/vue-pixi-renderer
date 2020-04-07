@@ -9,6 +9,7 @@
 - [使用说明](#%e4%bd%bf%e7%94%a8%e8%af%b4%e6%98%8e)
   - [安装使用](#%e5%ae%89%e8%a3%85%e4%bd%bf%e7%94%a8)
   - [基本介绍](#%e5%9f%ba%e6%9c%ac%e4%bb%8b%e7%bb%8d)
+    - [pixi元素基本属性](#pixi%e5%85%83%e7%b4%a0%e5%9f%ba%e6%9c%ac%e5%b1%9e%e6%80%a7)
     - [vroot](#vroot)
     - [container](#container)
     - [vtext](#vtext)
@@ -18,14 +19,14 @@
   - [class的使用](#class%e7%9a%84%e4%bd%bf%e7%94%a8)
   - [fit的使用：自适应大小](#fit%e7%9a%84%e4%bd%bf%e7%94%a8%e8%87%aa%e9%80%82%e5%ba%94%e5%a4%a7%e5%b0%8f)
   - [event的使用](#event%e7%9a%84%e4%bd%bf%e7%94%a8)
-  - [function 使用](#function-%e4%bd%bf%e7%94%a8)
+  - [function使用及淡入淡出效果的实现](#function%e4%bd%bf%e7%94%a8%e5%8f%8a%e6%b7%a1%e5%85%a5%e6%b7%a1%e5%87%ba%e6%95%88%e6%9e%9c%e7%9a%84%e5%ae%9e%e7%8e%b0)
     - [function 中可使用的一些函数](#function-%e4%b8%ad%e5%8f%af%e4%bd%bf%e7%94%a8%e7%9a%84%e4%b8%80%e4%ba%9b%e5%87%bd%e6%95%b0)
   - [简单实例](#%e7%ae%80%e5%8d%95%e5%ae%9e%e4%be%8b)
   - [示例网站](#%e7%a4%ba%e4%be%8b%e7%bd%91%e7%ab%99)
   - [工程相关](#%e5%b7%a5%e7%a8%8b%e7%9b%b8%e5%85%b3)
-  - [目前BUG:](#%e7%9b%ae%e5%89%8dbug)
-  - [TODO：](#todo)
-  - [更新日志：](#%e6%9b%b4%e6%96%b0%e6%97%a5%e5%bf%97)
+    - [目前BUG:](#%e7%9b%ae%e5%89%8dbug)
+    - [TODO：](#todo)
+    - [更新日志：](#%e6%9b%b4%e6%96%b0%e6%97%a5%e5%bf%97)
 
 <!-- /TOC -->
 
@@ -41,7 +42,7 @@
 
 动画请在函数中直接控制node，而不是使用Vue传递一个不断变化的属性。(每次重新render都要遍历虚拟Node树，耗时较大);
 
-其余皆为pixi属性，详情见[`pixiJS API DOCUMENT`](http://pixijs.download/release/docs/index.html)
+其余皆为pixi属性，详情见[`PixiJS API Documentation`](http://pixijs.download/release/docs/index.html)
 
 ### 安装使用
 **提醒： 目前有较多bug**
@@ -90,6 +91,13 @@ Vue.use(VuePIXIRenderer);
 
 ​	比如 `<vtext :x=100 :y=100 :anchor='{x: 0.5, y: 0.5}'>Text</vtext>` 
 
+#### pixi元素基本属性
+* `x` - 坐标x
+* `y` - 坐标y
+* `anchor` - { x: number[0-1], y: number[0-1] } - 图片锚点相对图片宽高的位置，xy均为0.5时为正中心。坐标x、y对应的点的位置也为锚点的位置。选择中心点位置为锚点位置。
+* `scale` - { x: number, y: number } - 放大倍数，sprite的width、height属性与之关联。直接调整width、height也会变化scale。
+* `tint` - number - 色调，颜色为hex的实际值，如0x0
+
 #### vroot
 
  ```jsx
@@ -104,7 +112,8 @@ Vue.use(VuePIXIRenderer);
     {id1: Texture}    <sprite>id1</sprite>
 	{id2: [] of Texture}    <sprite :time='500'>id2</sprite> 
 		则应表现为500ms一帧的AnimateSprite
-	如果没有传入参数，则<sprite>./img/logo.png</sprite>视作地址src，将会尝试以该地址加载图片
+  如果没有传入参数，则<sprite>./img/logo.png</sprite>视作地址src，将会尝试以该地址加载图片.
+  (请使用public里的图片路径，或import导入图片路径)
            >
     </vroot>
 </template>
@@ -136,7 +145,7 @@ export default {
  http://pixijs.download/release/docs/PIXI.TextStyle.html 
 
 #### sprite
-sprite如果要填写src，请填写public路径里的位置。直接填写相对位置图片可能不能被正常导入。
+sprite如果要填写src，请填写public路径里的位置或使用import导入图片。直接填写相对位置图片可能不能被正常导入。
 
 具体是id还是src，请查看 vroot中texture值是否给出
 
@@ -306,24 +315,42 @@ pointer是兼容mouse和touch的
 
 
 
-### function 使用
+### function使用及淡入淡出效果的实现
 
 * :update 传入的方法 每帧执行一次，每秒60帧
 
 * :init 传入的方法 在生成该pixi元素时执行
 
 * :start 传入的方法，在pixi元素被加入时执行
-  
-* :removing 传入的方法，应该是一个以第一个参数为回调的异步函数，作为隐藏时的特效显示
-  ```javascript
-  function (cb) {
-    // changeTo 函数请看下一节解释
-    this.changeTo({
-      alpha: 0,
-    }, 500, cb);
+
+* :show  :hide
+  * 如果传入方法
+    * show: 在init之后执行.
+    * hide: 第一个参数为回调函数，请以第一个参数作为该函数的回调
+  * 如果传入数字，则表明淡入或淡出时间  
+  以下两种方式效果相同 
+  ```jsx
+  <sprite :show=300 :hide=150>./img/logo.png</sprite>
+  ```
+  ```jsx
+  <sprite :show='show' :hide='hide'>./img/logo.png</sprite>
+  data() {
+    return {
+      show() {
+        this.changeTo({
+          alpha: 0,
+        }, {
+          alpha: 1,
+        }, 300);
+      },
+      hide(cb) {
+        this.changeTo({
+          alpha: 0,
+        }, 150, cb);
+      }
+    }
   }
   ```
-
 **注意，请不要写在methods里，methods里的方法会bind Vue的this**
 
 ```jsx
@@ -376,6 +403,14 @@ this.changeTo()
 参数为3个 to，rime， callback
 		from，to， callback
 参数为4个 from，to。time，callback
+```
+
+```javascript 
+this.tween();
+/* 不填参数默认为以自己建立一个tween，填参数则以参数对象
+具体使用方法见https://github.com/tweenjs/tween.js/blob/master/docs/user_guide.md */
+this.tween().to({alpha: 1}, 1000).start();
+
 ```
 
 ### 简单实例
@@ -488,7 +523,8 @@ index.js	- vue插件的导出
 
 |——lib
 
-​			——diff.js  - 虚拟node树的diff
+​			——diff.js  - 虚拟node树的diff  
+     ——extend.js - 为避免热重载Ticker一直增加导致动画变快而分离开
 
 ​			——index.js - 整体模块的导出
 
@@ -499,23 +535,27 @@ index.js	- vue插件的导出
 ​			—— patch.js - 虚拟node树的patch
 
 ​			—— Render.js  - 又一层包装，对一些参数的处理成nodes.js对应元素的参数，渲染Node由此处
+     —— texture.js - sprite中默认系统Sprite：Loading，error和 加载图片后更新node的方法
 
 ​			—— utils.js - 一些utils函数，比如颜色，deep assign， clone
 
-### 目前BUG:
+#### 目前BUG:
 * 由于没有显式指定Key，在结构发生变化时，比如中间有几个元素消失时，diff判断不是直接移除中间部分，而是逐个比对，导致后续元素使用replace而增大工作量。Vue的functional没有this，暂时没有找到给每一个元素一个单独id作为key的方案。
 * fit指定为'parent'时，内部元素改变时可能不能正常更新，父级元素改变时同样可能不能正常更新。
   * Graphics重新绘制后可能width，height不重新改变，导致fit更新失败。
   * 元素的复用有没有可能？清空一个元素再把值赋予？
 
-### TODO：
-* 增加一些动画函数，获取一个tween，简单介绍基本使用，具体使用看[`tween.js`](https://github.com/tweenjs/tween.js/blob/master/docs/user_guide.md)使用教程。这样在传入的init函数里可以进行更多动画。(更换一个init，应该是会直接执行init的)
-* sprite支持src属性，因为直接填到`<sprite>value</sprite>`里面可能相对位置的图片不能被正常导入。sprite使用`<sprite/>`标签？sprite加载错误时，将texture更换为Texture.Wrong，表明加载错误。(sprite标签使用src也是同样)
+#### TODO：
 * 性能感觉不好。如果每帧渲染一次感觉是极大的负担，不建议更改属性完成某些动画操作。如何性能优化？不确定哪些属性更改了，要全盘比对，耗资源较大。感觉主要适用于一些ui的绘制。
+* 提供:texture参数时 sprite的显示和报错未测试
 
-### 更新日志：
+#### 更新日志：
 4-5：
 * 默认将所有node的interactiveChildren设为false，当一个node有事件时，向上将parent的interactiveChildren设置为true
 * 修复了v-if使用中不能正常diff的问题。
 * 完善了图片路径加载的报错提示、热重载、以及用系统警告图片代替加载失败的图片等。
 * 增加了异步删除逻辑，可以在一个元素remove时，传入:remove函数实现消失动画。
+
+4-7:
+* 增加了 show，hide方法，用hide来代替:remove
+* 修复了sprite加载热重载的bug
