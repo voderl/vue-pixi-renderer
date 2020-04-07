@@ -9,7 +9,6 @@ import {
 import Tree from './Tree';
 import utils from '../lib/utils';
 import textures from '../lib/texture';
-import Render from '../lib/Render';
 /**
  * vroot 需要 是正常组件
  * 因为需要复用，所以在create时建立一个虚拟Node Tree
@@ -76,7 +75,7 @@ export default {
      * 加载sprite
      */
     if ($options.sprite.length > 0) {
-      textures.loadTexture($options, Render);
+      textures.loadTexture($options, patch);
     }
     console.timeEnd();
     return $data.vnode;
