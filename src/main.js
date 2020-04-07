@@ -39,10 +39,12 @@ Object.defineProperty(stage, 'zone', {
 /**
  * drawBorder
  */
-stage.addChild(nodes.getNode('border', {
-  lineColor: 0x0,
-  alignment: 0,
-}));
+stage.addChild(
+  nodes.getNode('border', {
+    lineColor: 0x0,
+    alignment: 0,
+  }),
+);
 
 /**
  * laod Images
