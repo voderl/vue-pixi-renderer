@@ -47,7 +47,8 @@
 
 ### 安装使用
 
-**提醒： 目前有较多 bug**
+**提醒： 目前有较多 bug，**
+**还未正式完成，npm 包可能更新不及时，建议不要使用(×**
 
 ```javascript
 npm install -save vue-pixi-renderer
