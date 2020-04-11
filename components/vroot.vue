@@ -1,11 +1,6 @@
-
 <script>
-import {
-  Application, Loader, Texture, utils as pixiUtils,
-} from 'pixi.js-legacy';
-import {
-  el, diff, patch, Node,
-} from '../lib';
+import { Application, Loader, Texture, utils as pixiUtils } from 'pixi.js-legacy';
+import { el, diff, patch, Node } from '../lib';
 import Tree from './Tree';
 import utils from '../lib/utils';
 import textures from '../lib/texture';
@@ -13,10 +8,10 @@ import textures from '../lib/texture';
  * vroot 需要 是正常组件
  * 因为需要复用，所以在create时建立一个虚拟Node Tree
  * 如果传递了stage参数，则将stage视为Container来渲染，返回虚拟node null
- * 
+ *
  * 如果不传递参数stage 需要自行在内部创建一个Application，返回虚拟node h(‘div’)，在div中appendChild(stage.view)
- * 
- * 
+ *
+ *
  */
 /**
  * 格式化class 比如 class中套class ，解析成正常的class
@@ -82,7 +77,7 @@ export default {
   },
   created() {
     const cls = {};
-    const allClass = this.$parent.class || {};
+    const allClass = this.$parent.$options.class || {};
     Object.keys(allClass).forEach(id => {
       cls[id] = formatClass(allClass[id], allClass);
     });
@@ -95,7 +90,7 @@ export default {
       return {
         texture: $attrs.texture,
         class: this.$data.class,
-        sprite: [],
+        sprite: []
       };
     },
     setup($attrs, h) {
@@ -106,27 +101,30 @@ export default {
          * to ensure hot replace module ,otherwise it will add multi renderer
          */
         console.log('set Stage');
-        const removed = $attrs.stage.removeChildren();
-        removed.forEach(child => child.remove());
+        // const removed = $attrs.stage.removeChildren();
+        // removed.forEach(child => child.remove());
         $data.Tree.stage = $attrs.stage;
         $data.vnode = null;
-      }
-      else {
+      } else {
         console.log('set App');
         const app = new Application({
           transparent: true,
           resolution: 1,
-          ...$attrs,
+          ...$attrs
         });
         $data.Tree.stage = app.stage;
         $data.app = app;
         $data.vnode = h('div');
       }
-    },
+    }
+  },
+  destroyed() {
+    const node = new Node('container');
+    this.$data.Tree.fresh(node);
   },
   mounted() {
     const { app } = this.$data;
     if (app) this.$el.appendChild(app.view);
-  },
+  }
 };
 </script>
