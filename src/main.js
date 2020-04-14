@@ -10,7 +10,7 @@ const app = new $.Application({
   height: 416,
   antialias: true,
   transparent: true,
-  resolution: 2
+  resolution: 2,
 });
 window.app = app;
 document.body.appendChild(app.view);
@@ -23,7 +23,7 @@ const main = {};
 window.main = main;
 
 window.vue = new Vue({
-  render: h => h(ui)
+  render: (h) => h(ui),
 }).$mount();
 stage.addChild(window.vue.$el);
 
@@ -46,7 +46,7 @@ main.drawBook = () => {
         special: 0,
         critical: 1,
         criticalDamage: '?',
-        defDamage: '?'
+        defDamage: '?',
       },
       {
         name: '小白兔',
@@ -61,7 +61,7 @@ main.drawBook = () => {
         special: 0,
         critical: 1,
         criticalDamage: '?',
-        defDamage: '?'
+        defDamage: '?',
       },
       {
         name: '小白',
@@ -76,7 +76,7 @@ main.drawBook = () => {
         special: 0,
         critical: 1,
         criticalDamage: '?',
-        defDamage: '?'
+        defDamage: '?',
       },
       {
         name: '小兔',
@@ -91,7 +91,7 @@ main.drawBook = () => {
         special: 0,
         critical: 1,
         criticalDamage: '?',
-        defDamage: '?'
+        defDamage: '?',
       },
       {
         name: '白兔',
@@ -106,7 +106,7 @@ main.drawBook = () => {
         special: 0,
         critical: 1,
         criticalDamage: '?',
-        defDamage: '?'
+        defDamage: '?',
       },
       {
         name: '小白兔007是我是我是我是我',
@@ -121,7 +121,7 @@ main.drawBook = () => {
         special: 0,
         critical: 1,
         criticalDamage: '?',
-        defDamage: '?'
+        defDamage: '?',
       },
       {
         name: '第二页',
@@ -136,9 +136,9 @@ main.drawBook = () => {
         special: 0,
         critical: 1,
         criticalDamage: '?',
-        defDamage: '?'
-      }
-    ]
+        defDamage: '?',
+      },
+    ],
   });
 };
 function showBook() {
