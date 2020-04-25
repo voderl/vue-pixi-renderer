@@ -4,6 +4,12 @@
 [`Vue.js`](https://vuejs.org)  
 [`PIXI.js`](https://pixijs.io)
 
+本项目虚拟 Node 更改自[`simple-virtual-dom`](https://github.com/livoras/simple-virtual-dom)。
+
+如果使用 vue 自身的虚拟 dom 可以看 https://github.com/voderl/vue-pixi ， 通过更改 vue.js 的 platform 相关源码来实现 pixi 的适配
+，但目前仅仅初步实现，正在重构进行，朝此项目功能方向靠拢。
+↑↑
+
 <!-- TOC -->
 
 - [vue-pixi-renderer](#vue-pixi-renderer)
