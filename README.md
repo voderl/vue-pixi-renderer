@@ -1,3 +1,10 @@
+# DEPRECATED
+
+**目前抛弃此项目，因为有更好的方案**  
+见 https://github.com/voderl/vue-pixi  
+更改 vue 源代码 重新生成的一个专门渲染 pixi node 的包  
+**！！**
+
 ## vue-pixi-renderer
 
 使用 vue 的结构来渲染 pixi 页面。
@@ -5,12 +12,6 @@
 [`PIXI.js`](https://pixijs.io)
 
 本项目虚拟 Node 更改自[`simple-virtual-dom`](https://github.com/livoras/simple-virtual-dom)。
-
-**目前抛弃此项目，因为有更好的方案**  
-见 https://github.com/voderl/vue-pixi  
-更改 vue 源代码 重新生成的一个专门渲染 pixi node 的包  
-**！！**
-
 <!-- TOC -->
 
 - [vue-pixi-renderer](#vue-pixi-renderer)
